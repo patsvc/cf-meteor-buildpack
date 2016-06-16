@@ -31,6 +31,8 @@ install_node() {
   NODE_URL="http://s3pository.heroku.com/node/v$node_version/node-v$node_version-linux-x64.tar.gz"
   curl $NODE_URL > $NODE_INSTALLER
   tar xzf $NODE_INSTALLER -C $BUILD_DIR
+  
+  rm -rf $NODE_INSTALLER
 
   # Move node (and npm) into ./.vendor and make them executable
   mkdir -p $BUILD_DIR/.vendor
@@ -57,6 +59,8 @@ install_meteor() {
     -e 's/set -/#set -/' \
     -e 's/curl --progress-bar --fail.*/curl "$TARBALL_URL" > meteor-bundle.tgz; tar -xzf meteor-bundle.tgz -C "$INSTALL_TMPDIR" -o/' \
     $METEOR_INSTALL_SCRIPT > install-meteor-verbose.sh
+    
+  rm -rf meteor-bundle.tgz
   chmod +x install-meteor-verbose.sh
 
   cat install-meteor-verbose.sh
