@@ -57,18 +57,22 @@ install_meteor() {
   status "Installing Meteor connected to $MONGO_URL"
   sed -e '/^#!\/bin\/sh/ s/$/ -x/' \
     -e 's/set -/#set -/' \
-    -e 's/RELEASE="1.3.3"/RELEASE="1.3.2.4"/' \
+    -e 's/RELEASE=.*/RELEASE="1.3.2.4"/' \
     -e 's/curl --progress-bar --fail.*/curl "$TARBALL_URL" > meteor-bundle.tgz; tar -xzf meteor-bundle.tgz -C "$INSTALL_TMPDIR" -o/' \
     $METEOR_INSTALL_SCRIPT > install-meteor-verbose.sh
-    
-  rm -rf meteor-bundle.tgz
+  
   chmod +x install-meteor-verbose.sh
 
   cat install-meteor-verbose.sh
   status "Execute ./install-meteor-verbose.sh"
   ./install-meteor-verbose.sh
   status "Done"
-
+  
+  #cleanup files
+  rm -rf meteor-bundle.tgz
+  rm -f install_meteor.sh
+  rm -f install-meteor-verbose.sh
+  
   status "Updating PATH with Meteor"
   PATH=$HOME/.meteor:$PATH
   
@@ -82,11 +86,13 @@ build() {
     pwd
     ls -la
     
-    status "Install meteor dependencies 2"
+    status "Install meteor dependencies"
     meteor npm install --save angular angular-meteor angular-meteor-auth
-    meteor npm install --save bunyan bunyan-loggly consul lodash yamljs pkgcloud
     meteor npm install --save angular-material angular-ui-router angular-animate
+    meteor npm install --save bunyan consul lodash yamljs pkgcloud
     meteor npm install --save fibers async newrelic
+    
+    npm prune --production 2>&1 | indent
     
     pwd
     ls -la
@@ -98,10 +104,12 @@ build() {
     pwd
     ls -la
     status "Installing npm dependencies"
-    npm install 2>&1 | indent
+    npm install --production 2>&1 | indent
     pwd
     ls -la
     mv $BUILD_DIR/.vendor $BUILD_DIR/vendor
+    # remove the local cache
+    rm -rf $BUILD_DIR/.meteor/local
   )
 }
 
