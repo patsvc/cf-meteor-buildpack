@@ -50,15 +50,15 @@ install_meteor() {
   # status "Install Meteor"
   # export PATH=/usr/bin:$PATH # necessary for install script to run from URL
   # curl https://install.meteor.com | sh
-  status "Downloading Meteor install script"
   METEOR_INSTALL_SCRIPT=install_meteor.sh
-  #curl https://install.meteor.com/ > $METEOR_INSTALL_SCRIPT
-  echo pwd 
-  ls -l
   
-  echo "list /tmp/staged/app"
-  ls -l /tmp/staged/app
-  cat /tmp/staged/app/install_meteor.sh > $METEOR_INSTALL_SCRIPT
+  if [ -f "/tmp/staged/app/install_meteor.sh" ] ; then
+    status "Using the packaged Meteor install script"
+    cat /tmp/staged/app/install_meteor.sh > $METEOR_INSTALL_SCRIPT
+  else
+    status "Downloading Meteor install script"
+    curl https://install.meteor.com/ > $METEOR_INSTALL_SCRIPT
+  fi
 
   status "Installing Meteor connected to $MONGO_URL"
   sed -e '/^#!\/bin\/sh/ s/$/ -x/' \
