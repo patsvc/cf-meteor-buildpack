@@ -31,7 +31,7 @@ install_node() {
   NODE_URL="http://s3pository.heroku.com/node/v$node_version/node-v$node_version-linux-x64.tar.gz"
   curl $NODE_URL > $NODE_INSTALLER
   tar xzf $NODE_INSTALLER -C $BUILD_DIR
-  
+
   rm -rf $NODE_INSTALLER
 
   # Move node (and npm) into ./.vendor and make them executable
@@ -51,7 +51,7 @@ install_meteor() {
   # export PATH=/usr/bin:$PATH # necessary for install script to run from URL
   # curl https://install.meteor.com | sh
   METEOR_INSTALL_SCRIPT=install_meteor.sh
-  
+
   if [ -f "/tmp/staged/app/install_meteor.sh" ] ; then
     status "Using the packaged Meteor install script"
     cat /tmp/staged/app/install_meteor.sh > $METEOR_INSTALL_SCRIPT
@@ -65,22 +65,22 @@ install_meteor() {
     -e 's/set -/#set -/' \
     -e 's/curl --progress-bar --fail.*/curl "$TARBALL_URL" > meteor-bundle.tgz; tar -xzf meteor-bundle.tgz -C "$INSTALL_TMPDIR" -o/' \
     $METEOR_INSTALL_SCRIPT > install-meteor-verbose.sh
-  
+
   chmod +x install-meteor-verbose.sh
 
   cat install-meteor-verbose.sh
   status "Execute ./install-meteor-verbose.sh"
   ./install-meteor-verbose.sh
   status "Done"
-  
+
   #cleanup files
   rm -rf meteor-bundle.tgz
   rm -f install_meteor.sh
   rm -f install-meteor-verbose.sh
-  
+
   status "Updating PATH with Meteor"
   PATH=$HOME/.meteor:$PATH
-  
+
   pwd
   ls -la
 }
@@ -90,15 +90,16 @@ build() {
     cd $BUILD_DIR
     pwd
     ls -la
-    
+
     status "Install meteor dependencies"
-    meteor npm install --save angular angular-meteor angular-meteor-auth
+    meteor npm install --save angular angular-meteor angular-meteor-auth angular-ui-validate
     meteor npm install --save angular-material angular-ui-router angular-animate
     meteor npm install --save bunyan consul lodash yamljs pkgcloud
     meteor npm install --save fibers async newrelic
-    
+    meteor npm install --save sanitize-html
+
     npm prune --production 2>&1 | indent
-    
+
     pwd
     ls -la
     status "Building meteor bundle"
