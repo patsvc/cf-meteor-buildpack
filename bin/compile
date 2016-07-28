@@ -96,8 +96,7 @@ build() {
     meteor npm install --save angular-sanitize angular-ui-validate meteor-node-stubs
     meteor npm install --save angular-material angular-ui-router angular-animate
     meteor npm install --save bunyan lodash yamljs pkgcloud
-    meteor npm install --save fibers async newrelic
-    meteor npm install --save sanitize-html
+    meteor npm install --save underscore async sanitize-html
 
     npm prune --production 2>&1 | indent
 
